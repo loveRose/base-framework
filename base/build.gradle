@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.novoda.bintray-release'//添加
 
 android {
     compileSdkVersion 28
@@ -22,7 +23,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -36,8 +36,19 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "io.reactivex.rxjava2:rxjava:2.2.19"
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }
 repositories {
     mavenCentral()
+}
+
+
+publish {
+    userOrg = 'lvyerose'//bintray.com用户名
+    repoName = 'Android-Module-Develop'
+    groupId = 'com.lvyerose'//jcenter上的路径
+    artifactId = 'base-framework'//项目名称
+    publishVersion = '1.0.0'//版本号
+    desc = 'This is a basic framework for Android development.'//描述，不重要
+    website = 'https://github.com/loveRose/base-framework'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }

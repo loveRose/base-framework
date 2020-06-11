@@ -2,8 +2,10 @@ package com.lvyerose.framework.base.general
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 
 /**
+ * 基础Activity抽象接口类
  *
  */
 interface IBaseActivity {
@@ -13,6 +15,7 @@ interface IBaseActivity {
      *
      * @return 返回页面布局id
      */
+    @LayoutRes
     fun setContentLayoutId(): Int
 
     /**

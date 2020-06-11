@@ -3,15 +3,19 @@ package com.lvyerose.framework.base.general
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 
 abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
 
+    /** 当前界面 Context 对象 */
+    protected lateinit var mContext: AppCompatActivity
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mContext = this
         onBeforeSetView()
         setContentView(setContentLayoutId())
         onAfterSetView()
@@ -92,4 +96,7 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
         rxLifecycleManager = null
     }
 
+    fun Any.toast(duration: Int = Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(this@BaseActivity, this.toString(), duration).apply { show() }
+    }
 }

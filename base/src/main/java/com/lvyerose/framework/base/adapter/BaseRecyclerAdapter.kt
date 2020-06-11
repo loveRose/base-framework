@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.lang.ref.WeakReference
 
 abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>() {
-    lateinit var layoutInflater: LayoutInflater
+    private lateinit var layoutInflater: LayoutInflater
     private var mLayout: Int = 0
     //处理多类型布局
     private var mLayoutIds: MutableMap<Int, Int> = mutableMapOf()

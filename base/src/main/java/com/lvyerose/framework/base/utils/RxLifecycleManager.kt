@@ -1,6 +1,7 @@
 package com.lvyerose.framework.base.utils
 
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 
 
@@ -14,10 +15,14 @@ class RxLifecycleManager {
     private val compositeDisposable = CompositeDisposable()
 
     fun addObserver(observer: DisposableObserver<*>) {
-        compositeDisposable.add(observer)
+        observer?.let { compositeDisposable?.add(it) }
+    }
+
+    fun addObserver(disposable: Disposable) {
+        disposable?.let { compositeDisposable?.add(it) }
     }
 
     fun clear() {
-        compositeDisposable.dispose()
+        compositeDisposable.clear()
     }
 }
