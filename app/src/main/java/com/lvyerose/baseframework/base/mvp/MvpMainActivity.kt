@@ -1,9 +1,9 @@
-package com.lvyerose.baseframework.mvp
+package com.lvyerose.baseframework.base.mvp
 
 import android.os.Bundle
 import android.util.Log
 import com.lvyerose.baseframework.R
-import com.lvyerose.baseframework.mvp.presenter.MvpMainPresenter
+import com.lvyerose.baseframework.base.mvp.presenter.MvpMainPresenter
 import com.lvyerose.framework.base.mvp.BaseMvpActivity
 import kotlinx.android.synthetic.main.activity_mvp_main.*
 

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">测试</string>
+    <string name="module_base_name">base基础模块测试</string>
+    <string name="module_tools_name">tools工具模块测试</string>
 </resources>

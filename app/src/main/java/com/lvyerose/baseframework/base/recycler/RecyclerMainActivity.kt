@@ -1,4 +1,4 @@
-package com.lvyerose.baseframework.recycler
+package com.lvyerose.baseframework.base.recycler
 
 import android.os.Bundle
 import com.lvyerose.baseframework.R

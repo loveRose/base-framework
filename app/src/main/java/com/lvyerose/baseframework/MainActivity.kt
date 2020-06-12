@@ -3,17 +3,23 @@ package com.lvyerose.baseframework
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.lvyerose.baseframework.mvp.MvpMainActivity
-import com.lvyerose.baseframework.recycler.RecyclerMainActivity
+import com.lvyerose.baseframework.base.BaseTestActivity
+import com.lvyerose.baseframework.tools.ToolsTestActivity
+import com.lvyerose.framework.base.general.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+/**
+ * 首页 进入各个模块
+ */
+class MainActivity : BaseActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        btn_test_recycler.setOnClickListener { startActivity(Intent(this, RecyclerMainActivity::class.java)) }
-        btn_test_mvp.setOnClickListener { startActivity(Intent(this, MvpMainActivity::class.java)) }
+    override fun setContentLayoutId() = R.layout.activity_main
+
+    override fun startAction(savedInstanceState: Bundle?) {
+        btn_base_test.setOnClickListener { startActivity(Intent(this, BaseTestActivity::class.java)) }
+        btn_tools_test.setOnClickListener { startActivity(Intent(this, ToolsTestActivity::class.java)) }
+        btn_network_test.setOnClickListener { "暂未开放".toast() }
+
     }
 
 }

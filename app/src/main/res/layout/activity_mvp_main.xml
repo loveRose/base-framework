@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".mvp.MvpMainActivity">
+        tools:context=".base.mvp.MvpMainActivity">
 
     <Button android:id="@+id/btn_send_network"
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/btn_send_error_network"
+            app:layout_constraintTop_toBottomOf="@+id/btn_send_close_network"
             android:layout_marginRight="32dp"
             android:layout_marginTop="12dp"
             android:text="支持多个Presenter引入"/>
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/btn_send_error_network"
+            app:layout_constraintTop_toBottomOf="@+id/btn_more_presenter"
             android:layout_marginRight="32dp"
             android:layout_marginTop="12dp"
             android:text="支持多个Model引入"/>
@@ -55,7 +55,7 @@
     <TextView android:id="@+id/tv_content"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              app:layout_constraintTop_toBottomOf="@+id/btn_send_close_network"/>
+              app:layout_constraintTop_toBottomOf="@+id/btn_more_model"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

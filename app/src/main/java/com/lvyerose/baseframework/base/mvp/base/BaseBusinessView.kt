@@ -1,4 +1,4 @@
-package com.lvyerose.baseframework.mvp.base
+package com.lvyerose.baseframework.base.mvp.base
 
 import com.lvyerose.framework.base.mvp.BaseView
 

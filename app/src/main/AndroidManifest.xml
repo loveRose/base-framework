@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.lvyerose.baseframework">
+          xmlns:tools="http://schemas.android.com/tools" package="com.lvyerose.baseframework">
 
     <application
             android:allowBackup="true"
@@ -8,9 +8,15 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
-        <activity android:name=".mvp.MvpMainActivity">
-        </activity>
+            android:theme="@style/AppTheme" tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+
+        <activity android:name=".base.recycler.RecyclerMainActivity"
+                  android:label="@string/module_base_name"/>
+        <activity android:name=".base.BaseTestActivity"
+                  android:label="@string/module_base_name"/>
+        <activity android:name=".tools.ToolsTestActivity"
+                  android:label="@string/module_tools_name"/>
+        <activity android:name=".base.mvp.MvpMainActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -18,7 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".recycler.RecyclerMainActivity"/>
 
     </application>
 

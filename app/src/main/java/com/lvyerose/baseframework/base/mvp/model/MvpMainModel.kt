@@ -1,11 +1,9 @@
-package com.lvyerose.baseframework.mvp.model
+package com.lvyerose.baseframework.base.mvp.model
 
 import com.lvyerose.framework.base.mvp.BaseModel
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
