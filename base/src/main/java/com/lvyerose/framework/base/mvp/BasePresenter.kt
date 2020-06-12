@@ -6,9 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.lvyerose.framework.base.utils.InstanceUtils
 import com.lvyerose.framework.base.utils.RxLifecycleManager
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
 import org.greenrobot.eventbus.EventBus
 
 abstract class BasePresenter<V : IView, M : IModel> : IPresenter<V>, LifecycleObserver {

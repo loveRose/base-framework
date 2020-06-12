@@ -12,15 +12,23 @@ class MvpMainActivity : BaseMvpActivity<MvpMainView, MvpMainPresenter>(), MvpMai
     override fun setContentLayoutId() = R.layout.activity_mvp_main
 
     override fun startAction(savedInstanceState: Bundle?) {
-        btn_send_close_network.setOnClickListener {
-            errorCallback("测试")
+        btn_send_network.setOnClickListener {
+            mPresenter?.sendNetwork("success")
         }
         btn_send_error_network.setOnClickListener {
-            mPresenter?.sendNetwork("id")
+            mPresenter?.sendErrorNetwork("error")
+        }
+        btn_send_close_network.setOnClickListener {
+            mPresenter?.sendCloseNetwork("close")
+            finish()
+        }
+        btn_more_presenter.setOnClickListener {
+        }
+        btn_more_model.setOnClickListener {
         }
     }
 
-    override fun errorCallback(msg: String) {
+    override fun showHint(msg: String) {
         msg.toast()
     }
 

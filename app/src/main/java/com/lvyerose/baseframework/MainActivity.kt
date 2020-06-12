@@ -16,5 +16,4 @@ class MainActivity : AppCompatActivity() {
         btn_test_mvp.setOnClickListener { startActivity(Intent(this, MvpMainActivity::class.java)) }
     }
 
-
 }

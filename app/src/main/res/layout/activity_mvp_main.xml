@@ -34,6 +34,24 @@
             android:layout_marginTop="12dp"
             android:text="发起网络请求并立即关闭当前页面"/>
 
+    <Button android:id="@+id/btn_more_presenter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_send_error_network"
+            android:layout_marginRight="32dp"
+            android:layout_marginTop="12dp"
+            android:text="支持多个Presenter引入"/>
+
+    <Button android:id="@+id/btn_more_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_send_error_network"
+            android:layout_marginRight="32dp"
+            android:layout_marginTop="12dp"
+            android:text="支持多个Model引入"/>
+
     <TextView android:id="@+id/tv_content"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"

@@ -1,8 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-if (project.publishModule == 'base') {
-    println 'base publish'
+
+if (project.publishModule == 'tools') {
+    println 'tools publish'
     apply plugin: 'com.novoda.bintray-release'//添加发布插件
 }
 
@@ -11,7 +12,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 14
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -26,6 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -37,23 +39,21 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'org.greenrobot:eventbus:3.2.0'
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 }
+
 repositories {
     mavenCentral()
 }
 
-if (project.publishModule == 'base') {
-    println 'base publish'
+if (project.publishModule == 'tools') {
+    println 'tools publish'
     publish {
         userOrg = 'lvyerose'//bintray.com用户名
         repoName = 'Android-Module-Develop'
         groupId = 'com.lvyerose'//jcenter上的路径
-        artifactId = 'base-framework'//项目名称
-        publishVersion = '1.0.0'//版本号
-        desc = 'This is a basic framework for Android development.'//描述，不重要
+        artifactId = 'base-tools'//项目名称
+        publishVersion = '0.0.1'//版本号
+        desc = 'This is a basic tools for Android development.'//描述，不重要
         website = 'https://github.com/loveRose/base-framework'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
     }
 }

@@ -11,9 +11,7 @@ abstract class BaseMvpActivity<V : IView, P : IPresenter<V>>
     // Activity设置View布局之后执行MVP框架实例化加载
     override fun onAfterSetView() {
         super.onAfterSetView()
-        if (this is IView) {
-            mPresenter = InstanceUtils.getInstance(this, 1)
-        }
+        mPresenter = InstanceUtils.getInstance(this, 1)
         mPresenter?.attachView(this as V)
     }
 
@@ -21,5 +19,6 @@ abstract class BaseMvpActivity<V : IView, P : IPresenter<V>>
         super.onDestroy()
         this.mPresenter = null
     }
+
 
 }

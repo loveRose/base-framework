@@ -5,4 +5,5 @@ interface IView {
     fun showLoading()
 
     fun dismissLoading()
+
 }
