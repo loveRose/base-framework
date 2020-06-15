@@ -19,7 +19,7 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
         onBeforeSetView()
         setContentView(setContentLayoutId())
         onAfterSetView()
-        startAction(savedInstanceState)
+        onStartAction(savedInstanceState)
     }
 
 

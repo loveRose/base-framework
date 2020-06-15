@@ -15,11 +15,10 @@ class MainActivity : BaseActivity() {
 
     override fun setContentLayoutId() = R.layout.activity_main
 
-    override fun startAction(savedInstanceState: Bundle?) {
+    override fun onStartAction(savedInstanceState: Bundle?) {
         btn_base_test.setOnClickListener { startActivity(Intent(this, BaseTestActivity::class.java)) }
         btn_tools_test.setOnClickListener { startActivity(Intent(this, ToolsTestActivity::class.java)) }
         btn_network_test.setOnClickListener { "暂未开放".toast() }
-
     }
 
 }

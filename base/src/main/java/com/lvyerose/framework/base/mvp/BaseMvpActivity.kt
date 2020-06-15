@@ -12,13 +12,11 @@ abstract class BaseMvpActivity<V : IView, P : IPresenter<V>>
     override fun onAfterSetView() {
         super.onAfterSetView()
         mPresenter = InstanceUtils.getInstance(this, 1)
-        mPresenter?.attachView(this as V)
+        mPresenter?.let { it.attachView(this as V) }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         this.mPresenter = null
     }
-
-
 }

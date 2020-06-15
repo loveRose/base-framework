@@ -3,7 +3,6 @@ package com.lvyerose.baseframework.tools
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.lvyerose.baseframework.R
-import com.lvyerose.framework.base.general.BaseActivity
 
 class ToolsTestActivity : AppCompatActivity() {
 

@@ -1,5 +1,6 @@
 package com.lvyerose.baseframework.base.mvp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.lvyerose.baseframework.R
@@ -11,7 +12,7 @@ class MvpMainActivity : BaseMvpActivity<MvpMainView, MvpMainPresenter>(), MvpMai
 
     override fun setContentLayoutId() = R.layout.activity_mvp_main
 
-    override fun startAction(savedInstanceState: Bundle?) {
+    override fun onStartAction(savedInstanceState: Bundle?) {
         btn_send_network.setOnClickListener {
             mPresenter?.sendNetwork("success")
         }
@@ -22,9 +23,11 @@ class MvpMainActivity : BaseMvpActivity<MvpMainView, MvpMainPresenter>(), MvpMai
             mPresenter?.sendCloseNetwork("close")
             finish()
         }
-        btn_more_presenter.setOnClickListener {
-        }
         btn_more_model.setOnClickListener {
+            startActivity(Intent(this, MoreModelMvpActivity::class.java))
+        }
+        btn_fragment_test.setOnClickListener {
+            startActivity(Intent(this, SimpleFragmentActivity::class.java))
         }
     }
 

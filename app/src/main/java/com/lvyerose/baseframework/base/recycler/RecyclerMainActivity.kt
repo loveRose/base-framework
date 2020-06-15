@@ -11,7 +11,7 @@ class RecyclerMainActivity : BaseActivity() {
 
     override fun setContentLayoutId() = R.layout.activity_recycler_main
 
-    override fun startAction(savedInstanceState: Bundle?) {
+    override fun onStartAction(savedInstanceState: Bundle?) {
         "Test Toast".toast()
     }
 }

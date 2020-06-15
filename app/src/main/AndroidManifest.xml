@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="com.lvyerose.baseframework">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.lvyerose.baseframework">
 
     <application
             android:allowBackup="true"
@@ -8,14 +9,22 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme" tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
-        <activity android:name=".base.recycler.RecyclerMainActivity"
-                  android:label="@string/module_base_name"/>
-        <activity android:name=".base.BaseTestActivity"
-                  android:label="@string/module_base_name"/>
-        <activity android:name=".tools.ToolsTestActivity"
-                  android:label="@string/module_tools_name"/>
+            android:theme="@style/AppTheme"
+            tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".base.mvp.MoreModelMvpActivity">
+        </activity>
+        <activity
+                android:name=".base.mvp.SimpleFragmentActivity"
+                android:label="@string/module_base_name"/>
+        <activity
+                android:name=".base.recycler.RecyclerMainActivity"
+                android:label="@string/module_base_name"/>
+        <activity
+                android:name=".base.BaseTestActivity"
+                android:label="@string/module_base_name"/>
+        <activity
+                android:name=".tools.ToolsTestActivity"
+                android:label="@string/module_tools_name"/>
         <activity android:name=".base.mvp.MvpMainActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -24,7 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

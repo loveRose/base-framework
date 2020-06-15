@@ -34,28 +34,28 @@
             android:layout_marginTop="12dp"
             android:text="发起网络请求并立即关闭当前页面"/>
 
-    <Button android:id="@+id/btn_more_presenter"
+    <Button android:id="@+id/btn_more_model"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
             app:layout_constraintTop_toBottomOf="@+id/btn_send_close_network"
             android:layout_marginRight="32dp"
             android:layout_marginTop="12dp"
-            android:text="支持多个Presenter引入"/>
+            android:text="支持多个Model引入"/>
 
-    <Button android:id="@+id/btn_more_model"
+
+    <Button android:id="@+id/btn_fragment_test"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/btn_more_presenter"
+            app:layout_constraintTop_toBottomOf="@+id/btn_more_model"
             android:layout_marginRight="32dp"
             android:layout_marginTop="12dp"
-            android:text="支持多个Model引入"/>
-
+            android:text="Fragment基础和Mvp模式测试"/>
     <TextView android:id="@+id/tv_content"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              app:layout_constraintTop_toBottomOf="@+id/btn_more_model"/>
+              app:layout_constraintTop_toBottomOf="@+id/btn_fragment_test"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

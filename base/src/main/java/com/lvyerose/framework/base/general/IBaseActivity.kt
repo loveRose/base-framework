@@ -30,7 +30,7 @@ interface IBaseActivity {
      *
      * @param savedInstanceState 原onCreate里面的状态保存参数
      */
-    fun startAction(savedInstanceState: Bundle?)
+    fun onStartAction(savedInstanceState: Bundle?)
 
     /**
      * 在调用 setContentView() 方法之前
