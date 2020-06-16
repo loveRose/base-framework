@@ -1,3 +1,3 @@
 package com.lvyerose.framework.base.adapter
 
-class RecyclerItemData<T>(var data: T? = null, var backupData: Any? = null, var type: Int? = null)
+class RecyclerItemData<T>(var itemType: Int? = null, var data: T? = null, var otherData: Any? = null)
