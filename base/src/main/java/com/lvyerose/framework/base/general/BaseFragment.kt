@@ -11,7 +11,9 @@ import java.io.Serializable
 
 
 abstract class BaseFragment : Fragment(), IBaseFragment {
-    protected val SIMPLE_VALUE_KEY = "simple_value_key"
+    protected val simpleKeyValue by lazy {
+        "simple_value_key"
+    }
     protected var parentView: View? = null
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
 
@@ -94,7 +96,7 @@ abstract class BaseFragment : Fragment(), IBaseFragment {
      */
     fun setArgumentData(simpleValue: String) {
         var bundle = Bundle()
-        bundle.putString(SIMPLE_VALUE_KEY, simpleValue)
+        bundle.putString(simpleKeyValue, simpleValue)
         arguments = bundle
     }
 }

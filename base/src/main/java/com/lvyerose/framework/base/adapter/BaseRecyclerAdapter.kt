@@ -1,145 +1,324 @@
 package com.lvyerose.framework.base.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import java.lang.ref.WeakReference
 
 abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>() {
-    private lateinit var layoutInflater: LayoutInflater
-    private var mLayout: Int = 0
-    //处理多类型布局
-    private var mLayoutIds: MutableMap<Int, Int> = mutableMapOf()
-    //处理多类型Type
+    //基本布局资源ID
+    private var mLayoutIdRes: Int = -1
+    //多布局资源Map集 key为布局类型#itemType value为布局资源ID
+    private var mMultiLayoutIdResMap: MutableMap<Int, Int> = mutableMapOf()
+    //头部布局资源ID
+    private var mHeaderLayoutIdRes: Int? = null
+    //脚部布局资源ID
+    private var mFooterLayoutIdRes: Int? = null
+    //布局类型集合
+    private var mItemTypeList: ArrayList<Int> = arrayListOf()
+    //原始数据集
+    private var mRawDataList: ArrayList<T> = arrayListOf()
+    //经过加工之后适应本适配器使用的数据集
     private var mDataList: MutableList<RecyclerItemData<T>> = arrayListOf()
 
-    private var mTypes: ArrayList<Int> = ArrayList()
-    //
-    private var mItemDataList: MutableList<RecyclerItemData<T>> = arrayListOf()
-    private var mOriginData: List<T?> = arrayListOf()
-    //存储第一次设置的规则
-    private var defaultRulesFunction: (DataCreator<T>.(T) -> Unit)? = null
-
-    private var mDataWithTypes: ArrayList<Pair<Int, T?>> = arrayListOf()
-    //保存拦截的类型和处理函数
-    private var interceptViews: MutableMap<Int, Any> = mutableMapOf()
-
-    private var mOnItemClickListener: ((position: Int, view: View) -> Unit)? = null
-
-    private var mHeaderView: WeakReference<View>? = null
-
-    private var mHeaderLayoutId: Int? = null
-
-    private var mFooterView: WeakReference<View>? = null
-
-    private var mFooterLayoutId: Int? = null
-
-    private lateinit var mBind: ((type: Int, vh: RecyclerViewHolder, data: T) -> Unit?)
-
-    private var mBindInterceptView: ((type: Int, vh: RecyclerViewHolder, data: T?, backupData: Any?) -> Unit?)? = null
-
-    private lateinit var mBindHeader: (view: View) -> Unit
-
-    private lateinit var mBindFooter: (view: View) -> Unit
+    //拦截器容器，存储需要拦截的View类型作为key，拦截规则作为value
+    private var mInterceptViewMap: MutableMap<Int, Any> = mutableMapOf()
+    //拦截器规则函数
+    private var mBindInterceptView:
+            ((itemType: Int, holder: RecyclerViewHolder, data: T?, otherData: Any?) -> Unit?)? = null
+    //数据布局对应规则
+    private var dataRulesFunction: (DataWrapper<T>.(T) -> Unit)? = null
+    //普通view的绑定函数
+    private lateinit var mBindItemView: ((itemType: Int, holder: RecyclerViewHolder, data: T) -> Unit?)
+    //定义Item点击监听回调
+    private var mOnItemClickListener: ((itemView: View, position: Int) -> Unit)? = null
+    //HeadView绑定函数
+    private lateinit var mBindHeaderView: (view: View) -> Unit
+    //FootView绑定函数
+    private lateinit var mBindFooterView: (view: View) -> Unit
 
     /**
-     * 添加单个布局
+     * 计算布局数量
+     * 如果头部和尾部设置了，则增加数量
      */
-    fun layout(layoutId: () -> Int) {
-        mLayout = layoutId()
-        mLayoutIds[mLayout] = mLayout
+    override fun getItemCount(): Int {
+        var count = mDataList.size
+        if (mHeaderLayoutIdRes != null) {
+            count++
+        }
+        if (mFooterLayoutIdRes != null) {
+            count++
+        }
+        return count
+    }
+
+    /**
+     * 覆盖系统的类型获取方法，提供我们的逻辑
+     * 如果不是头部类型和尾部类型则判断类型存储集合是否为空，不为空的话返回对应的类型
+     */
+    override fun getItemViewType(position: Int): Int =
+        when {
+            isHeaderByPosition(position) -> BaseRecyclerAdapter.HEAD_TYPE
+            isFooterByPosition(position) -> BaseRecyclerAdapter.FOOT_TYPE
+            mItemTypeList.isNotEmpty() -> getItemType(position)
+            else -> super.getItemViewType(position)
+        }
+
+    /**
+     *
+     * 如果当前存在头部布局，则每个位置 -1 为实际数据的位置
+     */
+    private fun getItemType(position: Int): Int {
+        var itemPosition = position
+        if (mHeaderLayoutIdRes != null) {
+            itemPosition = if (position > 0) position - 1 else position
+        }
+        return mItemTypeList[itemPosition]
+    }
+
+    /**
+     * 根据position判断是否需要添加尾部位置
+     */
+    private fun isFooterByPosition(position: Int): Boolean {
+        if (position == itemCount - 1) {
+            if (mFooterLayoutIdRes != null) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * 根据position判断是否需要添加头部位置
+     */
+    private fun isHeaderByPosition(position: Int): Boolean {
+        if (position == 0) {
+            if (mHeaderLayoutIdRes != null) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * 根据类型判断布局是否需要拦截
+     */
+    private fun isIntercept(itemViewType: Int): Boolean {
+        return mInterceptViewMap.containsKey(itemViewType)
+    }
+
+    /**
+     * 根据视图类型返回对应的ViewHolder
+     * 视图类型已经由系统调用 #getItemViewType()方法获取
+     */
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        //when里判断是否是头部类型、是否是尾部类型、是否存在多布局类型，如果没有则执行最后的单一布局类型
+        when (viewType) {
+            BaseRecyclerAdapter.HEAD_TYPE -> mHeaderLayoutIdRes?.let {
+                return RecyclerViewHolder(
+                    inflater.inflate(
+                        it!!,
+                        parent,
+                        false
+                    )
+                )
+            }
+            BaseRecyclerAdapter.FOOT_TYPE -> mFooterLayoutIdRes?.let {
+                return RecyclerViewHolder(
+                    inflater.inflate(
+                        it!!,
+                        parent,
+                        false
+                    )
+                )
+            }
+            else -> {
+                if (mItemTypeList.contains(viewType) && mMultiLayoutIdResMap[viewType] != null) {
+                    return RecyclerViewHolder(mMultiLayoutIdResMap[viewType]?.let {
+                        inflater.inflate(it, parent, false)
+                    }!!)
+                }
+            }
+        }
+        return RecyclerViewHolder(inflater.inflate(mLayoutIdRes!!, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
+        var itemType = getItemViewType(position)
+        if (itemType == HEAD_TYPE) {
+            //头部 视图数据绑定
+            mBindHeaderView(holder.itemView)
+        } else if (itemType == FOOT_TYPE) {
+            //尾部 视图数据绑定
+            mBindFooterView(holder.itemView)
+        } else {
+            //普通 视图数据绑定
+            var itemPosition = position
+            if (mHeaderLayoutIdRes != null) {
+                itemPosition = position - 1
+            }
+            holder.itemView.setOnClickListener { view ->
+                mOnItemClickListener?.invoke(view, itemPosition)
+            }
+            if (isIntercept(getItemViewType(position))) {
+                mBindInterceptView =
+                    mInterceptViewMap[getItemViewType(position)] as ((itemType: Int, holder: RecyclerViewHolder, data: T?, otherData: Any?) -> Unit?)?
+                if (mBindInterceptView != null) {
+                    mBindInterceptView?.invoke(
+                        getItemViewType(position),
+                        holder,
+                        mDataList[itemPosition].data,
+                        mDataList[itemPosition].otherData
+                    )
+                }
+            } else {
+                mDataList[itemPosition].data?.let { mBindItemView(getItemViewType(position), holder, it) }
+            }
+        }
+    }
+
+    private fun clear() {
+        mDataList.clear()
+        mItemTypeList.clear()
+        mInterceptViewMap.clear()
+        dataRulesFunction = null
+    }
+
+    companion object {
+        const val HEAD_TYPE = 1
+        const val FOOT_TYPE = 2
+    }
+
+    infix fun adapter(recyclerView: RecyclerView?) {
+        recyclerView?.adapter = this
+    }
+
+    fun adapter(recyclerView: () -> RecyclerView) {
+        recyclerView().adapter = this
+    }
+
+
+    /*********************************************************         对外提供的API        ****************************************************************************/
+
+    /**
+     * 添加一个布局
+     * @param layoutIdRes 布局资源ID
+     */
+    fun layout(layoutIdRes: () -> Int) {
+        mLayoutIdRes = layoutIdRes()
+        mMultiLayoutIdResMap[mLayoutIdRes] = mLayoutIdRes
     }
 
     /**
      * 添加多个布局
+     * 通过List<layoutIdRes>进行创建
+     * @param layoutIdList 布局资源ID集合
      */
-    fun layout(layoutIds: List<Int>) {
-        layoutIds.forEach {
-            mLayoutIds[it] = it
+    fun layoutMultiple(layoutIdList: List<Int>) {
+        layoutIdList.forEach {
+            mMultiLayoutIdResMap[it] = it
         }
-        if (mLayoutIds.isEmpty()) {
-            var firstKey = mLayoutIds.keys.first()
-            mLayout = mLayoutIds[firstKey]!!
+        if (mMultiLayoutIdResMap.isNotEmpty()) {
+            var firstKey = mMultiLayoutIdResMap.keys.first()
+            mLayoutIdRes = mMultiLayoutIdResMap[firstKey]!!
         }
     }
 
     /**
-     * 通过布局创造起进行添加多个布局
+     * 添加多个布局
+     * 通过布局创造器添加多个布局
+     * @param initLayout 布局创造器
      */
-    fun layoutMultiple(initLayout: LayoutCreator.() -> Unit) {
-        val creator = LayoutCreator()
-        creator.initLayout()
-        var firstKey = creator.getValue().keys.first()
-        mLayout = creator.getValue()[firstKey]!!
-        mLayoutIds = creator.getValue()
+    fun layoutMultiple(initLayout: LayoutWrapper.() -> Unit) {
+        val wrapper = LayoutWrapper()
+        wrapper.initLayout()
+        var firstKey = wrapper.getValue().keys.first()
+        mLayoutIdRes = wrapper.getValue()[firstKey]!!
+        mMultiLayoutIdResMap = wrapper.getValue()
     }
 
 
     /**
-     * 适配数据
+     * 设置数据源
+     * 单一数据源使用该方法
+     * 先清除所有数据重新添加
+     *
      */
-    fun data(dataList: List<T>, initData: DataCreator<T>.(T) -> Unit) {
+    fun setData(dataList: () -> ArrayList<T>) {
         clear()
-        defaultRulesFunction = initData
-        mOriginData = dataList
-        var creator = DataCreator<T>()
+        mRawDataList = dataList()
+        dataList().forEach {
+            mDataList.add(RecyclerItemData(itemType = mLayoutIdRes, data = it))
+            mItemTypeList.add(mLayoutIdRes)
+        }
+
+    }
+
+    /**
+     * 数据适配器
+     * 多数据模块下使用该方法
+     */
+    fun dataAdapter(dataList: ArrayList<T>, initData: DataWrapper<T>.(T) -> Unit) {
+        clear()
+        dataRulesFunction = initData
+        mRawDataList = dataList
+        var wrapper = DataWrapper<T>()
+        //遍历原始数据 并回调创建器
         dataList.forEach {
-            creator.initData(it)
+            wrapper.initData(it)
         }
-
-        creator.dataAndTypes.forEach { (type, data) ->
-            mDataList.add(RecyclerItemData(type = type, data = data))
+        //经过上面回调创建器 创建了大量数据和类型并存储在dataTypeList中
+        //取出并创建我们适配器通用的数据类型
+        wrapper.dataATypeList.forEach { (itemType, data) ->
+            mDataList.add(RecyclerItemData(itemType = itemType, data = data))
         }
-
+        //设置对应类型集
         mDataList.forEach {
-            if (it.type == null) {
-                it.type = mLayout//最后一个
+            if (it.itemType == null) {
+                it.itemType = mLayoutIdRes
             }
-            mTypes.add(it.type!!)
+            mItemTypeList.add(it.itemType!!)
         }
     }
 
     /**
-     * 仅更新数据，单布局使用此方法，如果和类型数据不设置，默认用最后一个设置的layout
-     */
-    fun data(dataList: () -> List<*>) {
-        clear()
-        var tempdatas = dataList() as ArrayList<T?>
-        mOriginData = tempdatas
-        tempdatas.forEach {
-            mDataList.add(RecyclerItemData(data = it, type = mLayout))
-            mTypes.add(mLayout)
-        }
-
-    }
-
-    /**
-     * 新增单个数据在尾部
-     * notice 多布局调用不起作用
+     * 添加一条单个数据
      */
     fun addData(data: T) {
         if (!isMultipleLayoutMode()) {
-            mDataList.add(RecyclerItemData(data = data, type = mLayout))
-            mTypes.add(mLayout)
+            mDataList.add(RecyclerItemData(itemType = mLayoutIdRes, data = data))
+            mItemTypeList.add(mLayoutIdRes)
+        } else {
+            mDataList.add(RecyclerItemData(itemType = mLayoutIdRes, data = data))
+            mItemTypeList.add(mLayoutIdRes)
+//            //多布局类型数据添加，使用最后一次布局规则
+//            var wrapper = DataWrapper<T>()
+//            if (dataRulesFunction != null) {
+//                dataRulesFunction!!.invoke(wrapper, data)
+//                wrapper.dataATypeList.forEach { (itemType, data) ->
+//                    mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+//                    mItemTypeList.add(itemType)
+//                }
+//            }
         }
     }
 
     /**
-     * 新增MultipleType数据在尾部
+     * 添加一条多类型模式数据
+     * 同样适用于单一布局类型
      */
-    fun addData(type: Int, data: T) {
-        mDataList.add(RecyclerItemData(data = data, type = type))
-        mTypes.add(type)
+    fun addData(itemType: Int, data: T) {
+        mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+        mItemTypeList.add(itemType)
     }
 
     /**
-     * 指定位置添加数据
+     * 添加一条数据在指定位置
      */
-    fun addData(index: Int, type: Int, data: T) {
-        mDataList.add(index, RecyclerItemData(data = data, type = type))
-        mTypes.add(index, type)
+    fun addData(index: Int, itemType: Int, data: T) {
+        mDataList.add(index, RecyclerItemData(itemType = itemType, data = data))
+        mItemTypeList.add(index, itemType)
     }
 
     /**
@@ -147,240 +326,95 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
      */
     fun addOtherData(index: Int, type: Int, backupData: Any) {
         if (isMultipleLayoutMode()) {
-            mDataList.add(index, RecyclerItemData(type = type, backupData = backupData))
-            mTypes.add(index, type)
+            mDataList.add(index, RecyclerItemData(itemType = type, otherData = backupData))
+            mItemTypeList.add(index, type)
         }
     }
 
     /**
-     * 新增MultipleType数据在尾部
+     * 添加List数据
+     * 如果是多布局，则使用最后一次布局规则进行绘制
+     * 如果是单布局，则直接按单布局规则添加
      */
     fun addData(dataList: List<T>) {
         if (isMultipleLayoutMode()) {
-            var creator = DataCreator<T>()
-            if (defaultRulesFunction != null) {
+            //多布局类型数据添加，使用最后一次布局规则
+            var wrapper = DataWrapper<T>()
+            if (dataRulesFunction != null) {
                 dataList.forEach {
-                    defaultRulesFunction!!.invoke(creator, it)
+                    dataRulesFunction!!.invoke(wrapper, it)
                 }
-
-                creator.dataAndTypes.forEach { (type, data) ->
-                    mDataList.add(RecyclerItemData(type = type, data = data))
-                    mTypes.add(type)
+                wrapper.dataATypeList.forEach { (itemType, data) ->
+                    mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+                    mItemTypeList.add(itemType)
                 }
-
             }
         } else {
+            //普通布局数据添加
             dataList.forEach {
-                mDataList.add(RecyclerItemData(data = it, type = mLayout))
-                mTypes.add(mLayout)
+                addData(mLayoutIdRes, it)
             }
         }
     }
+
 
     /***
-     * MultipleType新增数据
+     * mutilType新增数据
      */
-    fun addData(dataList: List<T>, initData: DataCreator<T>.(T) -> Unit) {
-        var creator = DataCreator<T>()
+    fun addDatas(dataList: List<T>, initData: DataWrapper<T>.(T) -> Unit) {
+        var wrapper = DataWrapper<T>()
         dataList.forEach {
-            creator.initData(it)
+            wrapper.initData(it)
         }
 
-        creator.dataAndTypes.forEach { (type, data) ->
-            mDataList.add(RecyclerItemData(type = type, data = data))
+        wrapper.dataATypeList.forEach { (type, data) ->
+            mDataList.add(RecyclerItemData(itemType = type, data = data))
         }
-
         mDataList.forEach {
-            if (it.type == null) {
-                it.type = mLayout//最后一个
+            if (it.itemType == null) {
+                it.itemType = mLayoutIdRes
             }
-            mTypes.add(it.type!!)
+            mItemTypeList.add(it.itemType!!)
         }
     }
 
-    /**
-     * 判断当前适配器是否存在多个布局
-     * 用于add数据的时候进行区分
-     */
     private fun isMultipleLayoutMode(): Boolean {
-        if (mLayoutIds.isEmpty()) {
+        if (mMultiLayoutIdResMap.isEmpty()) {
             error("请至少设置一个布局")
         }
-        return mLayoutIds.size > 1
-    }
-
-    private fun clear() {
-        mDataList.clear()
-        mTypes.clear()
-        interceptViews.clear()
-        defaultRulesFunction = null
-
+        return mMultiLayoutIdResMap.size > 1
     }
 
     /**
-     * 当我们已经定义好大部分要绑定的数据是，只是个别的需要单独设置，我们可以通过这个方法拦截，backupData作为备份数据，也就是其他少量布局数据
+     * item点击事件
      */
-    fun bindData(type: Int, interceptBind: (type: Int, vh: RecyclerViewHolder, data: T?, backupData: Any?) -> Unit) {
-        interceptViews[type] = interceptBind
-    }
-
-    /**
-     * 判断此类型布局是否被拦截
-     */
-    private fun isIntercept(itemViewType: Int): Boolean {
-        return interceptViews.containsKey(itemViewType)
-    }
-
-    fun bindData(bind: (type: Int, vh: RecyclerViewHolder, data: T) -> Unit) {
-        mBind = bind
-    }
-
-    fun onItemClick(itemClickFunction: (position: Int, view: View) -> Unit) {
+    fun onItemClick(itemClickFunction: (itemView: View, position: Int) -> Unit) {
         mOnItemClickListener = itemClickFunction
     }
 
-    fun header(view: View, bindHeader: (view: View) -> Unit) {
-        bindHeader(view)
+    /**
+     * 绑定普通布局对应数据的回调
+     */
+    fun bindViewData(bindView: (itemType: Int, holder: RecyclerViewHolder, data: T) -> Unit) {
+        mBindItemView = bindView
     }
 
-    fun header(layoutId: Int, bindHeader: (view: View) -> Unit) {
-        mHeaderLayoutId = layoutId
-        mBindHeader = bindHeader
+    /**
+     * 添加headerView 并携带布局回调函数
+     * 通过资源ID创建
+     */
+    fun headerViewData(layoutId: Int, bindHeader: (view: View) -> Unit) {
+        mHeaderLayoutIdRes = layoutId
+        mBindHeaderView = bindHeader
     }
 
-    fun footer(layoutId: Int, bindFooter: (view: View) -> Unit) {
-        mFooterLayoutId = layoutId
-        mBindFooter = bindFooter
-    }
-
-    fun inflater(inflater: () -> LayoutInflater) {
-        layoutInflater = inflater()
-    }
-
-    fun inflater(inflater: LayoutInflater, withInflater: BaseRecyclerAdapter<T>.() -> Unit) {
-        layoutInflater = inflater
-        withInflater()
-    }
-
-    fun inflater(context: Context, withContext: BaseRecyclerAdapter<T>.() -> Unit) {
-        layoutInflater = LayoutInflater.from(context)
-        withContext()
-    }
-
-    infix fun into(recyclerView: RecyclerView?) {
-        recyclerView?.adapter = this
-    }
-
-    fun into(recyclerView: () -> RecyclerView) {
-        recyclerView().adapter = this
-    }
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, type: Int): RecyclerViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        when (type) {
-            HEAD_TYPE -> if (mHeaderLayoutId != null) return RecyclerViewHolder(
-                inflater.inflate(
-                    mHeaderLayoutId!!,
-                    parent,
-                    false
-                )
-            )
-            FOOT_TYPE -> if (mFooterLayoutId != null) return RecyclerViewHolder(
-                inflater.inflate(
-                    mFooterLayoutId!!,
-                    parent,
-                    false
-                )
-            )
-        }
-        if (mTypes.contains(type) && mLayoutIds[type] != null) {
-            return RecyclerViewHolder(mLayoutIds[type]?.let {
-                inflater.inflate(it, parent, false)
-            }!!)
-        }
-        return RecyclerViewHolder(inflater.inflate(mLayout, parent, false))
-    }
-
-    override fun getItemCount(): Int {
-        var count = mDataList.size
-        if (mHeaderLayoutId != null || mHeaderView != null) {
-            count++
-        }
-        if (mFooterLayoutId != null || mFooterView != null) {
-            count++
-        }
-        return count
-    }
-
-    override fun onBindViewHolder(vh: RecyclerViewHolder, position: Int) {
-        if (getItemViewType(position) == HEAD_TYPE) {
-            mBindHeader(vh.itemView)
-        } else if (getItemViewType(position) == FOOT_TYPE) {
-            mBindFooter(vh.itemView)
-        } else {
-            var calculatePosition = position
-            if (mHeaderView != null || mHeaderLayoutId != null) {
-                calculatePosition = position - 1
-            }
-            vh.itemView.setOnClickListener { view ->
-                mOnItemClickListener?.invoke(calculatePosition, view)
-            }
-            if (isIntercept(getItemViewType(position))) {
-                mBindInterceptView =
-                    interceptViews[getItemViewType(position)] as ((type: Int, vh: RecyclerViewHolder, data: T?, backupData: Any?) -> Unit?)?
-                if (mBindInterceptView != null) {
-                    mBindInterceptView?.invoke(
-                        getItemViewType(position),
-                        vh,
-                        mDataList[calculatePosition].data,
-                        mDataList[calculatePosition].backupData
-                    )
-                }
-            } else {
-                mDataList[calculatePosition].data?.let { mBind(getItemViewType(position), vh, it) }
-            }
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int =
-        when {
-            isHead(position) -> HEAD_TYPE
-            isFoot(position) -> FOOT_TYPE
-            mTypes.size > 0 -> getType(position)
-            else -> super.getItemViewType(position)
-        }
-
-
-    private fun getType(position: Int): Int {
-        var p = position
-        if (mHeaderLayoutId != null || mHeaderView != null) {
-            p = if (position > 0) position - 1 else position
-        }
-        return mTypes[p]
-    }
-
-    private fun isFoot(position: Int): Boolean {
-        if (position == itemCount - 1) {
-            if (mFooterLayoutId != null || mFooterView != null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun isHead(position: Int): Boolean {
-        if (position == 0) {
-            if (mHeaderLayoutId != null || mHeaderLayoutId != null) {
-                return true
-            }
-        }
-        return false
-    }
-
-    companion object {
-        const val HEAD_TYPE = 1
-        const val FOOT_TYPE = 2
+    /**
+     * 添加footerView 并携带布局回调函数
+     * 通过资源ID创建
+     */
+    fun footerView(layoutId: Int, bindFooter: (view: View) -> Unit) {
+        mFooterLayoutIdRes = layoutId
+        mBindFooterView = bindFooter
     }
 
 }
