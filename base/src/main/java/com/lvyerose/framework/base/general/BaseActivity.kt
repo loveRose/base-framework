@@ -10,8 +10,9 @@ import com.lvyerose.framework.base.utils.RxLifecycleManager
 abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
 
     /** 当前界面 Context 对象 */
-    protected lateinit var mContext: AppCompatActivity
+    protected open lateinit var mContext: AppCompatActivity
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

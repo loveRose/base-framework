@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.fragment_simple_layout.*
 class SimpleFragment : BaseFragment() {
     var simpleValue: String? = null
     override fun onArgumentAction(bundle: Bundle?) {
-        simpleValue = bundle?.get(SIMPLE_VALUE_KEY) as String?
+        simpleValue = bundle?.get(simpleKeyValue) as String?
     }
 
     override fun onContentLayoutId() = R.layout.fragment_simple_layout
