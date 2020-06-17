@@ -24,7 +24,7 @@ class RecyclerMainActivity : BaseActivity() {
             startActivity(Intent(this, RecyclerMultiple2Activity::class.java))
         }
         btn_layout_demo.setOnClickListener {
-            startActivity(Intent(this, RecyclerMultiple1Activity::class.java))
+            startActivity(Intent(this, RecyclerCompleteActivity::class.java))
         }
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        tools:context=".base.mvp.SimpleFragmentActivity">
+    <TextView android:id="@+id/_banal_1"
+              android:layout_width="78dp" android:layout_height="78dp"
+              android:text="推广1"
+              android:gravity="center"
+              android:textColor="#ffffff"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintBottom_toBottomOf="parent"
+              android:background="#e040fb"
+              app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
+              app:layout_constraintEnd_toStartOf="@+id/_banal_2"/>
+    <TextView android:id="@+id/_banal_2"
+              android:layout_width="78dp" android:layout_height="78dp"
+              android:text="推广2"
+              android:gravity="center"
+              android:textColor="#ffffff"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintBottom_toBottomOf="parent"
+              android:background="#e040fb"
+              app:layout_constraintStart_toEndOf="@+id/_banal_1" app:layout_constraintHorizontal_bias="0.5"
+              app:layout_constraintEnd_toStartOf="@+id/_banal_3"/>
+    <TextView android:id="@+id/_banal_3"
+              android:layout_width="78dp" android:layout_height="78dp"
+              android:text="推广3"
+              android:gravity="center"
+              android:textColor="#ffffff"
+              app:layout_constraintTop_toTopOf="parent"
+              app:layout_constraintBottom_toBottomOf="parent"
+              android:background="#e040fb"
+              app:layout_constraintStart_toEndOf="@+id/_banal_2" app:layout_constraintHorizontal_bias="0.5"
+              app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
