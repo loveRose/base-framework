@@ -43,6 +43,7 @@ class RecyclerMultiple1Activity : BaseActivity() {
                 R.layout.item_color_7_layout -> holder.bindView<TextView>(R.id.item_tv_title).text = data
             }
         }
+
         //使用该方法将使用第一个布局效果
 //        adapter1.setData {
 //            dataList
@@ -76,6 +77,7 @@ class RecyclerMultiple1Activity : BaseActivity() {
                 }
             }
         }
+        //多布局下数据添加如果只添加了数据 没有添加布局选项  那么将执行使用布局
         adapter1.onItemClick { _, position ->
             if (position % 3 == 0) {
                 adapter1.addData(arrayListOf("批量新增6数据", "批量新增7数据"))

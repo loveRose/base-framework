@@ -11,6 +11,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".base.recycler.RecyclerCompleteActivity"/>
         <activity android:name=".base.recycler.RecyclerMultiple1Activity"/>
         <activity android:name=".base.recycler.RecyclerMultiple2Activity">
         </activity>

@@ -58,8 +58,8 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
      */
     override fun getItemViewType(position: Int): Int =
         when {
-            isHeaderByPosition(position) -> BaseRecyclerAdapter.HEAD_TYPE
-            isFooterByPosition(position) -> BaseRecyclerAdapter.FOOT_TYPE
+            isHeaderByPosition(position) -> HEAD_TYPE
+            isFooterByPosition(position) -> FOOT_TYPE
             mItemTypeList.isNotEmpty() -> getItemType(position)
             else -> super.getItemViewType(position)
         }
@@ -134,6 +134,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
                 )
             }
             else -> {
+                //多类型的ViewHolder返回
                 if (mItemTypeList.contains(viewType) && mMultiLayoutIdResMap[viewType] != null) {
                     return RecyclerViewHolder(mMultiLayoutIdResMap[viewType]?.let {
                         inflater.inflate(it, parent, false)
@@ -141,6 +142,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
                 }
             }
         }
+        //普通的单一类型ViewHolder
         return RecyclerViewHolder(inflater.inflate(mLayoutIdRes!!, parent, false))
     }
 
@@ -290,27 +292,45 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
             mDataList.add(RecyclerItemData(itemType = mLayoutIdRes, data = data))
             mItemTypeList.add(mLayoutIdRes)
         } else {
-            mDataList.add(RecyclerItemData(itemType = mLayoutIdRes, data = data))
-            mItemTypeList.add(mLayoutIdRes)
-//            //多布局类型数据添加，使用最后一次布局规则
-//            var wrapper = DataWrapper<T>()
-//            if (dataRulesFunction != null) {
-//                dataRulesFunction!!.invoke(wrapper, data)
-//                wrapper.dataATypeList.forEach { (itemType, data) ->
-//                    mDataList.add(RecyclerItemData(itemType = itemType, data = data))
-//                    mItemTypeList.add(itemType)
-//                }
-//            }
+            //多布局类型数据添加，使用最后一次布局规则
+            var wrapper = DataWrapper<T>()
+            if (dataRulesFunction != null) {
+                dataRulesFunction!!.invoke(wrapper, data)
+                wrapper.dataATypeList.forEach { (itemType, data) ->
+                    mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+                    mItemTypeList.add(itemType)
+                }
+            }
         }
     }
 
     /**
-     * 添加一条多类型模式数据
+     * 添加一条多类型模式数据 复用原有布局类型
      * 同样适用于单一布局类型
      */
     fun addData(itemType: Int, data: T) {
         mDataList.add(RecyclerItemData(itemType = itemType, data = data))
         mItemTypeList.add(itemType)
+    }
+
+    /**
+     * 添加一条多类型模式数据
+     */
+    fun addData(data: T, initData: DataWrapper<T>.(T) -> Unit) {
+        dataRulesFunction = initData
+        var wrapper = DataWrapper<T>()
+        //遍历原始数据 并回调创建器
+        wrapper.initData(data)
+        //经过上面回调创建器 创建了大量数据和类型并存储在dataTypeList中
+        //取出并创建我们适配器通用的数据类型
+        wrapper.dataATypeList.forEach { (itemType, data) ->
+            mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+        }
+        //设置对应类型集
+        if (mDataList.last().itemType == null) {
+            mDataList.last().itemType = mLayoutIdRes
+        }
+        mItemTypeList.add(mDataList.last().itemType!!)
     }
 
     /**
@@ -322,12 +342,13 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
     }
 
     /**
-     * 指定位置添加数据
+     * 指定位置添加额外类型数据
      */
-    fun addOtherData(index: Int, type: Int, backupData: Any) {
+    fun addOtherData(index: Int, itemType: Int, otherData: Any) {
         if (isMultipleLayoutMode()) {
-            mDataList.add(index, RecyclerItemData(itemType = type, otherData = backupData))
-            mItemTypeList.add(index, type)
+            mDataList.add(index, RecyclerItemData(itemType = itemType, otherData = otherData))
+            mItemTypeList.add(index, itemType)
+            mMultiLayoutIdResMap[itemType] = itemType
         }
     }
 
@@ -358,8 +379,33 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
     }
 
 
+    /**
+     * 添加List数据
+     * 多布局使用，则使用最后一次布局规则进行绘制
+     */
+    fun addData(dataList: List<T>, initData: DataWrapper<T>.(T) -> Unit) {
+        dataRulesFunction = initData
+        var wrapper = DataWrapper<T>()
+        //遍历原始数据 并回调创建器
+        dataList.forEach {
+            wrapper.initData(it)
+        }
+        //经过上面回调创建器 创建了大量数据和类型并存储在dataTypeList中
+        //取出并创建我们适配器通用的数据类型
+        wrapper.dataATypeList.forEach { (itemType, data) ->
+            mDataList.add(RecyclerItemData(itemType = itemType, data = data))
+        }
+        //设置对应类型集
+        repeat(dataList.size) {
+            if (mDataList[it + mDataList.size - dataList.size].itemType == null) {
+                mDataList[it + mDataList.size - dataList.size].itemType = mLayoutIdRes
+            }
+            mItemTypeList.add(mDataList[it + mDataList.size - dataList.size].itemType!!)
+        }
+    }
+
     /***
-     * mutilType新增数据
+     * multipleType新增数据
      */
     fun addDatas(dataList: List<T>, initData: DataWrapper<T>.(T) -> Unit) {
         var wrapper = DataWrapper<T>()
@@ -376,6 +422,18 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
             }
             mItemTypeList.add(it.itemType!!)
         }
+    }
+
+    /**
+     * 添加拦截器 对需要处理的数据进行拦截
+     */
+    fun interceptBindViewData(
+        itemType: Int,
+        interceptBindViewData:
+            (itemType: Int, holder: RecyclerViewHolder, data: T?, otherData: Any?)
+        -> Unit
+    ) {
+        mInterceptViewMap[itemType] = interceptBindViewData
     }
 
     private fun isMultipleLayoutMode(): Boolean {
