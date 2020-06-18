@@ -1,6 +1,7 @@
 package com.lvyerose.framework.base.general
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
@@ -13,16 +14,18 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
     protected open lateinit var mContext: AppCompatActivity
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mContext = this
+        requestedOrientation = defaultOrientation()
         onBeforeSetView()
         setContentView(setContentLayoutId())
         onAfterSetView()
         onStartAction(savedInstanceState)
     }
 
+    //默认强制竖屏 如果需要其他的设置 重写此方法即可
+    override fun defaultOrientation() = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
     override fun onSaveInstanceState(outState: Bundle) {
         //保存状态 用于恢复
