@@ -77,4 +77,9 @@ interface IBaseActivity {
      * 虚拟键 菜单按钮点击回调
      */
     fun onKeyMenu(): Boolean
+
+    /**
+     * 设置默认屏幕方向
+     */
+    fun defaultOrientation(): Int
 }
