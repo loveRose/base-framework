@@ -43,6 +43,7 @@ dependencies {
 }
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 if (project.publishModule == 'base') {
