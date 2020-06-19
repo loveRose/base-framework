@@ -14,6 +14,13 @@ abstract class BaseFragment : Fragment(), IBaseFragment {
     protected val simpleKeyValue by lazy {
         "simple_value_key"
     }
+//    /**
+//     * 获取权限处理类
+//     */
+//    protected val rxPermissions: RxPermissions by lazy {
+//        RxPermissions(this)
+//    }
+
     protected var parentView: View? = null
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
 
