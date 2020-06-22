@@ -5,10 +5,11 @@ import android.view.Gravity
 import android.widget.Toast
 
 /**
- * desc: 统一管理类
+ * desc: Toast封装
  * author: lad
  */
 class MyToast private constructor() {
+
     companion object {
         private var isShow = true
 

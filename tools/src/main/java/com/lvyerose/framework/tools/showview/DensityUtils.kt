@@ -8,6 +8,7 @@ import android.util.TypedValue
  * author: lad
  */
 class DensityUtils private constructor() {
+
     companion object {
         /**
          * dp转px
