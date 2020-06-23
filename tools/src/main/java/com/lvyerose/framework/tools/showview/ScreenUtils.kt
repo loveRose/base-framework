@@ -13,6 +13,7 @@ import android.view.WindowManager
  * author: lad
  */
 class ScreenUtils private constructor() {
+
     companion object {
         /**
          * 获得屏幕高度

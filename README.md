@@ -2,7 +2,6 @@
 Android基于Kotlin设计的基础框架，支持MVP基础架构，以及组件化中的公共模块封装，拿来即用。
 
 ![reuse](http://119.23.190.71/static/img/130.png "reuse")
-
 # android基础架构设计：
 开发语言：Kotlin
 架构形式：组件化
@@ -40,19 +39,29 @@ Gradle地址：com.lvyerose.base-framework:1.0.0
 模块包名：com.lvyerose.framework.tools
 Gradle地址：com.lvyerose.base-tools:0.0.1
 模块内容：
-### 通用工具
-        字符串工具
-        数组、集合处理工具
-        日期处理工具
-### Android工具
-        基本信息工具
-        屏幕相关信息工具
-        文件存储工具 （包含图片存储）
-        图片处理工具（包含 图片无损压缩、图片自定义变换、提供矩阵操作等）
-        权限工具
-        文字处理工具
-### 其他
-        WebView截图功能
+### app-->通用工具
+       获取app相关信息
+       手机信息采集工具
+       网络辅助类
+       app版本工具
+       剪切板工具
+       权限相关工具类
+       系统工具类
+### debug-->调试工具
+       错误信息反馈信息
+       日志工具类
+       Toast封装
+### showview-->视图显示工具
+       单位转换辅助类
+       打开或关闭软键盘
+       屏幕相关辅助类
+       SnackBar的工具类
+       图片处理工具
+       字符串处理工具
+       时间处理工具
+### storage-->存储工具
+       SDCard辅助类
+       SharedPreferences封装类
 
 ## 计划收录功能：
 
