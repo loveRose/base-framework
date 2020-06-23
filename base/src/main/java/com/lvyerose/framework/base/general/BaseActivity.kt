@@ -9,8 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.lvyerose.framework.base.R
 import com.lvyerose.framework.base.constant.TransitionMode
 import com.lvyerose.framework.base.utils.RxLifecycleManager
+import kotlinx.coroutines.*
 
-abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
+abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope() {
     /** 当前界面 Context 对象 */
     protected open lateinit var mContext: AppCompatActivity
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
@@ -61,6 +62,7 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
         super.onNewIntent(intent)
         //创建时不同启动模式导致生命周期不创建 而是调用该方法
         newIntent(intent)
+        GlobalScope
     }
 
     override fun newIntent(intent: Intent) {
@@ -123,6 +125,8 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity {
         super.onDestroy()
         rxLifecycleManager!!.clear()
         rxLifecycleManager = null
+        //取消Kotlin的协程
+        cancel()
     }
 
     fun Any.toast(duration: Int = Toast.LENGTH_SHORT): Toast {
