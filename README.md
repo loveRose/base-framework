@@ -1,7 +1,8 @@
 # base-framework
 Android基于Kotlin设计的基础框架，支持MVP基础架构，以及组件化中的公共模块封装，拿来即用。
 
-## android基础架构设计：
+![reuse](http://119.23.190.71/static/img/130.png "reuse")
+# android基础架构设计：
 开发语言：Kotlin
 架构形式：组件化
 开发模式：MVP

@@ -3,6 +3,7 @@ package com.lvyerose.framework.base.general
 import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.LayoutRes
+import com.lvyerose.framework.base.constant.TransitionMode
 
 /**
  * 基础Activity抽象接口类
@@ -77,4 +78,15 @@ interface IBaseActivity {
      * 虚拟键 菜单按钮点击回调
      */
     fun onKeyMenu(): Boolean
+
+    /**
+     * 设置默认屏幕方向
+     */
+    fun defaultOrientation(): Int
+
+    /**
+     * 设置界面进出动画
+     */
+    fun getOverridePendingTransitionMode(transitionMode: TransitionMode): TransitionMode
+
 }

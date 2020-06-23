@@ -7,10 +7,15 @@
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:roundIcon="@mipmap/ic_launcher"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".base.other.LoginActivity">
+        </activity>
+        <activity android:name=".base.other.OtherMainActivity">
+        </activity>
+        <activity android:name=".base.permission.PermissionMainActivity"/>
         <activity android:name=".base.recycler.RecyclerCompleteActivity"/>
         <activity android:name=".base.recycler.RecyclerMultiple1Activity"/>
         <activity android:name=".base.recycler.RecyclerMultiple2Activity">

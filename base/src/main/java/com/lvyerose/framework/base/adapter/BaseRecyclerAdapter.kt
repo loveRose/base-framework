@@ -115,7 +115,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
         val inflater = LayoutInflater.from(parent.context)
         //when里判断是否是头部类型、是否是尾部类型、是否存在多布局类型，如果没有则执行最后的单一布局类型
         when (viewType) {
-            BaseRecyclerAdapter.HEAD_TYPE -> mHeaderLayoutIdRes?.let {
+            HEAD_TYPE -> mHeaderLayoutIdRes?.let {
                 return RecyclerViewHolder(
                     inflater.inflate(
                         it!!,
@@ -124,7 +124,7 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
                     )
                 )
             }
-            BaseRecyclerAdapter.FOOT_TYPE -> mFooterLayoutIdRes?.let {
+            FOOT_TYPE -> mFooterLayoutIdRes?.let {
                 return RecyclerViewHolder(
                     inflater.inflate(
                         it!!,
@@ -336,9 +336,10 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
     /**
      * 添加一条数据在指定位置
      */
-    fun addData(index: Int, itemType: Int, data: T) {
-        mDataList.add(index, RecyclerItemData(itemType = itemType, data = data))
-        mItemTypeList.add(index, itemType)
+    fun addData(index: Int, itemType: Int?, data: T) {
+        var type = itemType ?: mLayoutIdRes
+        mDataList.add(index, RecyclerItemData(itemType = type, data = data))
+        mItemTypeList.add(index, type)
     }
 
     /**
@@ -474,5 +475,4 @@ abstract class BaseRecyclerAdapter<T> : RecyclerView.Adapter<RecyclerViewHolder>
         mFooterLayoutIdRes = layoutId
         mBindFooterView = bindFooter
     }
-
 }
