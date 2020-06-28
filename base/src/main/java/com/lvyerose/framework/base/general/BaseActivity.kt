@@ -14,8 +14,8 @@ import kotlinx.coroutines.*
 abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope() {
     /** 当前界面 Context 对象 */
     protected open lateinit var mContext: AppCompatActivity
-    var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
-    protected var mTransitionMode = TransitionMode.RIGHT //默认进场方式 右
+    protected var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
+    private var mTransitionMode = TransitionMode.RIGHT //默认进场方式 右
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,7 +126,15 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope
         rxLifecycleManager!!.clear()
         rxLifecycleManager = null
         //取消Kotlin的协程
+        launch {
+
+        }
         cancel()
+    }
+
+    suspend fun cancelPer(actionTask: Job?) {
+        actionTask?.cancelAndJoin()
+
     }
 
     fun Any.toast(duration: Int = Toast.LENGTH_SHORT): Toast {
