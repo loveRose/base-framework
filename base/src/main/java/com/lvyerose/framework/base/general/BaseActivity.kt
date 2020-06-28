@@ -8,10 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.lvyerose.framework.base.R
 import com.lvyerose.framework.base.constant.TransitionMode
+import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 import kotlinx.coroutines.*
 
-abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope() {
+abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope(),ICoroutineDefault {
     /** 当前界面 Context 对象 */
     protected open lateinit var mContext: AppCompatActivity
     protected var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()

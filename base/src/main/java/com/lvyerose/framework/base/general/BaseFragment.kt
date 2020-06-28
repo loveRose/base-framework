@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.RxLifecycleManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 import org.greenrobot.eventbus.EventBus
 import java.io.Serializable
 
 
-abstract class BaseFragment : Fragment(), IBaseFragment {
+abstract class BaseFragment : Fragment(), IBaseFragment, CoroutineScope by MainScope(), ICoroutineDefault {
     protected val simpleKeyValue by lazy {
         "simple_value_key"
     }
