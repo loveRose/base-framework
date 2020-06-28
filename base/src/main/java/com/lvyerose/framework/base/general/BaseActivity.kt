@@ -12,7 +12,7 @@ import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 import kotlinx.coroutines.*
 
-abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope(),ICoroutineDefault {
+abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope by MainScope(), ICoroutineDefault {
     /** 当前界面 Context 对象 */
     protected open lateinit var mContext: AppCompatActivity
     protected var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
