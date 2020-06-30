@@ -24,11 +24,25 @@ class NetworkMainActivity : BaseActivity() {
 
         tv_network_init_status.text = "网络模块初始化状态：加载完成"
         btn_activity_network.setOnClickListener {
-            executeCoroutine(work = {
-                HttpClient.service(Api::class.java).test()
-            }, onSuccess = {
-                tv_network_init_status.text = it.toString()
-            })
+            executeCoroutine(
+                onStart = {
+                    "开始请求".toast()
+                },
+                work = {
+                    HttpClient.service(Api::class.java).test()
+                },
+                onSuccess = {
+                    tv_network_init_status.text = it.toString()
+                },
+                onFail = { code: Int, message: String? ->
+                    message?.toast()
+                },
+                onCompleted = {
+                    "完成请求".toast()
+                },
+                onError = {
+                    it.message?.toast()
+                })
         }
     }
 }

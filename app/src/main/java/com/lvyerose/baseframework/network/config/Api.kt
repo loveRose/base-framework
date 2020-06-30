@@ -4,5 +4,5 @@ import retrofit2.http.GET
 
 interface Api {
     @GET("version/teacherget")
-    suspend fun test(): BaseEntity<Data>
+    suspend fun test(): Data
 }

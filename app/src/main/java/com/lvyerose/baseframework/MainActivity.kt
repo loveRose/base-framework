@@ -5,9 +5,12 @@ import android.os.Bundle
 import com.lvyerose.baseframework.base.BaseTestActivity
 import com.lvyerose.baseframework.network.NetworkMainActivity
 import com.lvyerose.baseframework.tools.ToolsTestActivity
+import com.lvyerose.framework.base.exception.BusinessException
 import com.lvyerose.framework.base.general.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.delay
+import java.sql.Time
+import kotlin.random.Random
 
 /**
  * 首页 进入各个模块
@@ -29,15 +32,19 @@ class MainActivity : BaseActivity() {
             work = {
                 //工作线程处理逻辑
                 delay(2000)
-                "延时了2秒"
+                if (Random(10).nextBoolean()) {
+                    throw BusinessException(100, "业务异常")
+                } else {
+                    "延时了2秒"
+                }
             },
             onSuccess = {
                 //处理完成之后的逻辑
-                it.toast()
+                it?.toast()
             },
-            onFail = {
+            onFail = { code, message ->
                 //处理失败之后的逻辑
-                "work返回了null".toast()
+                "work出现了 BusinessException 业务异常".toast()
             },
             onError = {
                 //处理出现异常之后的逻辑

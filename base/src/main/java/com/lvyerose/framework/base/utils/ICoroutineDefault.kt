@@ -1,5 +1,6 @@
 package com.lvyerose.framework.base.utils
 
+import com.lvyerose.framework.base.exception.BusinessException
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -27,8 +28,8 @@ interface ICoroutineDefault {
         context: CoroutineContext = EmptyCoroutineContext,
         onStart: () -> Unit = {},
         work: suspend () -> T?,
-        onSuccess: (T) -> Unit = {},
-        onFail: () -> Unit = {},
+        onSuccess: (T?) -> Unit = {},
+        onFail: (Int, String?) -> Unit = { Int, String -> },
         onError: (Throwable) -> Unit = {},
         onCompleted: () -> Unit = {}
     ): Job {
@@ -36,13 +37,12 @@ interface ICoroutineDefault {
             try {
                 onStart()
                 val res: T? = withContext(Dispatchers.IO) { work() }
-                res?.let {
-                    onSuccess(it)
-                }
-                res ?: onFail()
+                onSuccess(res)
             } catch (e: Exception) {
-                e.printStackTrace()
-                onError(e)
+                if (e is BusinessException)
+                    onFail(e.code, e.message)
+                else
+                    onError(e)
             } finally {
                 onCompleted()
             }
