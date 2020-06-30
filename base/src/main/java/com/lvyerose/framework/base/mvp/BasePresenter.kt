@@ -4,12 +4,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.InstanceUtils
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import org.greenrobot.eventbus.EventBus
 
-abstract class BasePresenter<V : IView, M : IModel> : IPresenter<V>, LifecycleObserver {
+abstract class BasePresenter<V : IView, M : IModel> : IPresenter<V>, LifecycleObserver, CoroutineScope by MainScope(),
+    ICoroutineDefault {
     var mView: V? = null
     var mModel: M? = null
     open var otherModel: IModel? = null
@@ -128,6 +133,8 @@ abstract class BasePresenter<V : IView, M : IModel> : IPresenter<V>, LifecycleOb
         // 保证Activity结束时取消
         rxLifecycleManager!!.clear()
         rxLifecycleManager = null
+        //取消协程域下的所有协程
+        cancel()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

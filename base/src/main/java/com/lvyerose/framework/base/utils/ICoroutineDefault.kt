@@ -15,21 +15,26 @@ interface ICoroutineDefault {
      * executeCoroutine
      * (
      *  this.coroutineContext,
+     *  onStart = {//流程开始逻辑}
      *  work = {//工作线程处理逻辑},
      *  onSuccess = {//处理完成之后的逻辑},
      *  onFail = {//处理失败之后的逻辑},
      *  onError = {//处理出现异常之后的逻辑}
+     *  onCompleted = {//流程结束逻辑}
      * )
      */
     fun <T> executeCoroutine(
         context: CoroutineContext = EmptyCoroutineContext,
+        onStart: () -> Unit = {},
         work: suspend () -> T?,
         onSuccess: (T) -> Unit = {},
         onFail: () -> Unit = {},
-        onError: (Throwable) -> Unit = {}
+        onError: (Throwable) -> Unit = {},
+        onCompleted: () -> Unit = {}
     ): Job {
         return CoroutineScope(Dispatchers.Main).launch(context) {
             try {
+                onStart()
                 val res: T? = withContext(Dispatchers.IO) { work() }
                 res?.let {
                     onSuccess(it)
@@ -38,6 +43,8 @@ interface ICoroutineDefault {
             } catch (e: Exception) {
                 e.printStackTrace()
                 onError(e)
+            } finally {
+                onCompleted()
             }
         }
     }

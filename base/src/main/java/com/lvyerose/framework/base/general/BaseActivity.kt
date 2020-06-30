@@ -63,7 +63,6 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope
         super.onNewIntent(intent)
         //创建时不同启动模式导致生命周期不创建 而是调用该方法
         newIntent(intent)
-        GlobalScope
     }
 
     override fun newIntent(intent: Intent) {
@@ -127,15 +126,7 @@ abstract class BaseActivity : AppCompatActivity(), IBaseActivity, CoroutineScope
         rxLifecycleManager!!.clear()
         rxLifecycleManager = null
         //取消Kotlin的协程
-        launch {
-
-        }
         cancel()
-    }
-
-    suspend fun cancelPer(actionTask: Job?) {
-        actionTask?.cancelAndJoin()
-
     }
 
     fun Any.toast(duration: Int = Toast.LENGTH_SHORT): Toast {

@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import org.greenrobot.eventbus.EventBus
 import java.io.Serializable
 
@@ -17,12 +19,6 @@ abstract class BaseFragment : Fragment(), IBaseFragment, CoroutineScope by MainS
     protected val simpleKeyValue by lazy {
         "simple_value_key"
     }
-//    /**
-//     * 获取权限处理类
-//     */
-//    protected val rxPermissions: RxPermissions by lazy {
-//        RxPermissions(this)
-//    }
 
     protected var parentView: View? = null
     var rxLifecycleManager: RxLifecycleManager? = RxLifecycleManager()
@@ -61,6 +57,7 @@ abstract class BaseFragment : Fragment(), IBaseFragment, CoroutineScope by MainS
         rxLifecycleManager!!.clear()
         rxLifecycleManager = null
         if (useEventBus()) EventBus.getDefault().unregister(this)
+        cancel()
     }
 
     override fun onStartAction(parentView: View) {
@@ -108,5 +105,9 @@ abstract class BaseFragment : Fragment(), IBaseFragment, CoroutineScope by MainS
         var bundle = Bundle()
         bundle.putString(simpleKeyValue, simpleValue)
         arguments = bundle
+    }
+
+    fun Any.toast(duration: Int = Toast.LENGTH_SHORT): Toast {
+        return Toast.makeText(context, this.toString(), duration).apply { show() }
     }
 }

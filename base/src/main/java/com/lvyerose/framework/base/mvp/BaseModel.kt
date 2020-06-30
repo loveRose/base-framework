@@ -4,11 +4,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.lvyerose.framework.base.utils.ICoroutineDefault
 import com.lvyerose.framework.base.utils.RxLifecycleManager
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
-abstract class BaseModel : IModel, LifecycleObserver {
+abstract class BaseModel : IModel, LifecycleObserver, CoroutineScope by MainScope(), ICoroutineDefault {
 
     var rxLifecycleManager: RxLifecycleManager? = null
 
@@ -33,6 +37,8 @@ abstract class BaseModel : IModel, LifecycleObserver {
     private fun unDispose() {
         rxLifecycleManager?.clear()
         rxLifecycleManager = null
+        //取消协程域下所有协程
+        cancel()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
