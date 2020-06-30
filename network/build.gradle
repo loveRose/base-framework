@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
@@ -22,7 +22,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -34,6 +33,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'com.squareup.retrofit2:retrofit:2.6.2'
+    api 'com.squareup.okhttp3:okhttp:4.2.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
+    api 'com.google.code.gson:gson:2.8.6'
 }
 repositories {
     mavenCentral()

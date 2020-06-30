@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.lvyerose.baseframework.network.NetworkMainActivity">
+
+    <Button android:id="@+id/btn_activity_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="普通activity中请求"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button android:id="@+id/btn_fragment_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="普通Fragment中请求"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_activity_network"
+    />
+    <Button android:id="@+id/btn_mvp_p_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MVP的Presenter中请求"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_fragment_network"
+    />
+    <Button android:id="@+id/btn_mvp_m_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MVP的Model中请求"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_mvp_p_network"
+    />
+    <TextView android:id="@+id/tv_network_init_status"
+              android:layout_marginTop="16dp"
+              android:layout_marginLeft="32dp"
+              android:text="网络模块初始化状态：正在初始化"
+              android:layout_marginRight="32dp"
+              app:layout_constraintTop_toBottomOf="@+id/btn_mvp_m_network"
+              android:layout_width="match_parent" android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

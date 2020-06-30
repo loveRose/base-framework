@@ -3,6 +3,7 @@ package com.lvyerose.baseframework
 import android.content.Intent
 import android.os.Bundle
 import com.lvyerose.baseframework.base.BaseTestActivity
+import com.lvyerose.baseframework.network.NetworkMainActivity
 import com.lvyerose.baseframework.tools.ToolsTestActivity
 import com.lvyerose.framework.base.general.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,7 +19,7 @@ class MainActivity : BaseActivity() {
     override fun onStartAction(savedInstanceState: Bundle?) {
         btn_base_test.setOnClickListener { startActivity(Intent(this, BaseTestActivity::class.java)) }
         btn_tools_test.setOnClickListener { startActivity(Intent(this, ToolsTestActivity::class.java)) }
-        btn_network_test.setOnClickListener { "暂未开放".toast() }
+        btn_network_test.setOnClickListener { startActivity(Intent(this, NetworkMainActivity::class.java)) }
 
         /**
          * 协程工具简单使用示例
