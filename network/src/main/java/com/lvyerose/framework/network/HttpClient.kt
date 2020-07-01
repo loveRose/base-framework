@@ -45,7 +45,7 @@ class HttpClient private constructor() {
          * 初始化 init()方法之后可对OkHttpClient-Build进行配置
          * 调用此方法添加拦截器、超时设置、重定向设置等
          */
-        fun configOkHttpClientBuild(otherInterceptor: (build: OkHttpClient.Builder) -> Unit?): HttpClient {
+        fun configOkHttpClientBuild(otherInterceptor: (build: OkHttpClient.Builder) -> OkHttpClient.Builder?): HttpClient {
             instance.okHttpClientBuild ?: error("必须先调用init()方法进行初始化")
             otherInterceptor?.let {
                 otherInterceptor.invoke(instance.okHttpClientBuild!!)

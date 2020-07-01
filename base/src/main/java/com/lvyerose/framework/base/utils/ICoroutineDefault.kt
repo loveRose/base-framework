@@ -29,22 +29,32 @@ interface ICoroutineDefault {
         onStart: () -> Unit = {},
         work: suspend () -> T?,
         onSuccess: (T?) -> Unit = {},
-        onFail: (Int, String?) -> Unit = { Int, String -> },
+        onFail: (Int, String?) -> Unit = { _, _ -> },
         onError: (Throwable) -> Unit = {},
-        onCompleted: () -> Unit = {}
+        onCompleted: () -> Unit = {},
+        onCancel: () -> Unit = {}
     ): Job {
-        return CoroutineScope(Dispatchers.Main).launch(context) {
+        var scope: CoroutineScope = if (this is CoroutineScope) {
+            this
+        } else {
+            CoroutineScope(Dispatchers.Main)
+        }
+        return scope.launch(context) {
             try {
                 onStart()
                 val res: T? = withContext(Dispatchers.IO) { work() }
                 onSuccess(res)
-            } catch (e: Exception) {
-                if (e is BusinessException)
-                    onFail(e.code, e.message)
-                else
-                    onError(e)
-            } finally {
                 onCompleted()
+            } catch (e: Exception) {
+                when (e) {
+                    is CancellationException -> {
+                        onCancel()
+                    }
+                    is BusinessException -> onFail(e.code, e.message)
+                    else -> onError(e)
+                }
+                if (e !is CancellationException)
+                    onCompleted()
             }
         }
     }

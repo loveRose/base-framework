@@ -44,7 +44,7 @@ class MainActivity : BaseActivity() {
             },
             onFail = { code, message ->
                 //处理失败之后的逻辑
-                "work出现了 BusinessException 业务异常".toast()
+                "work出现了 BusinessException 业务异常 $code $message".toast()
             },
             onError = {
                 //处理出现异常之后的逻辑

@@ -1,4 +1,4 @@
-package com.lvyerose.baseframework.network.config
+package com.lvyerose.baseframework.network.config.converter
 
 import com.google.gson.Gson
 import okhttp3.RequestBody
@@ -25,7 +25,10 @@ class ResponseConverterFactory private constructor(var gson: Gson) : Converter.F
         annotations: Array<Annotation?>?,
         retrofit: Retrofit?
     ): Converter<ResponseBody, Type> { //返回我们自定义的Gson响应体变换器
-        return GSONResponseBodyConverter(gson, type)
+        return GSONResponseBodyConverter(
+            gson,
+            type
+        )
     }
 
     override fun requestBodyConverter(
@@ -34,6 +37,9 @@ class ResponseConverterFactory private constructor(var gson: Gson) : Converter.F
         methodAnnotations: Array<Annotation?>?,
         retrofit: Retrofit?
     ): Converter<*, RequestBody?>? { //返回我们自定义的Gson响应体变换器
-        return GSONResponseBodyConverter(gson, type)
+        return GSONResponseBodyConverter(
+            gson,
+            type
+        )
     }
 }

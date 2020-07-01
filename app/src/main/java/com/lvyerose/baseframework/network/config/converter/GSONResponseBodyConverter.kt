@@ -1,6 +1,7 @@
-package com.lvyerose.baseframework.network.config
+package com.lvyerose.baseframework.network.config.converter
 
 import com.google.gson.Gson
+import com.lvyerose.baseframework.network.entity.BaseEntity
 import com.lvyerose.framework.base.exception.BusinessException
 import okhttp3.ResponseBody
 import retrofit2.Converter

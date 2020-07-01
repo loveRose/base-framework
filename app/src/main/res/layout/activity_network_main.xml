@@ -50,4 +50,13 @@
               android:layout_marginRight="32dp"
               app:layout_constraintTop_toBottomOf="@+id/btn_mvp_m_network"
               android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <fragment
+            android:id="@+id/fragment_view"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_network_init_status"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:name="com.lvyerose.baseframework.network.fragment.NetworkFragment"
+    />
 </androidx.constraintlayout.widget.ConstraintLayout>
